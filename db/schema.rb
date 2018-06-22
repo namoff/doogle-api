@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_13_181723) do
+ActiveRecord::Schema.define(version: 2018_06_19_201840) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,29 +36,12 @@ ActiveRecord::Schema.define(version: 2018_06_13_181723) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "definitions", force: :cascade do |t|
-    t.text "word_definition"
-    t.bigint "word_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["word_id"], name: "index_definitions_on_word_id"
-  end
-
-  create_table "sub_definitions", force: :cascade do |t|
-    t.text "word_sub_definition"
-    t.bigint "definition_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["definition_id"], name: "index_sub_definitions_on_definition_id"
-  end
-
   create_table "words", force: :cascade do |t|
     t.string "word_name"
     t.string "word_class"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "definitions"
   end
 
-  add_foreign_key "definitions", "words"
-  add_foreign_key "sub_definitions", "definitions"
 end

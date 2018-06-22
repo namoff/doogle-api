@@ -4,15 +4,17 @@ RSpec.describe "Words", type: :request do
 
   let(:valid_attributes) {
     {
-      word_name: "validName",
-      word_class: "validClass"
+      word_name: Faker::Lorem.word,
+      word_class: Faker::Lorem.word,
+      definitions: [Faker::Lorem.sentence]
     }
   }
 
   let(:invalid_attributes) {
     {
       word_name: nil,
-      word_class: nil
+      word_class: nil,
+      definitions: nil
     }
   }
 
@@ -41,7 +43,7 @@ RSpec.describe "Words", type: :request do
 
     end
 
-    context "with 10 words present" do
+    context "with words present" do
 
       before do
         create_list(:word, 10)
@@ -70,6 +72,7 @@ RSpec.describe "Words", type: :request do
     context "with word not present" do
 
       before do
+        stub_get_dictionary_api_fail
         get word_path bad_word_id
       end
 
@@ -148,8 +151,8 @@ RSpec.describe "Words", type: :request do
         expect(response.content_type).to eq "application/json"
       end
 
-      it "returns error response" do
-        expect(json).not_to be_empty
+      it "returns empty response" do
+        expect(json).to be_empty
       end
 
     end
@@ -162,8 +165,8 @@ RSpec.describe "Words", type: :request do
 
       let(:updated_attributes_valid) {
         {
-          word_name: "UpdatedTestName",
-          word_class: "UpdatedTestClass"
+          word_name: Faker::Lorem.word,
+          word_class: Faker::Lorem.word
         }
       }
 
@@ -219,8 +222,8 @@ RSpec.describe "Words", type: :request do
 
       let(:updated_attributes_valid) {
         {
-          word_name: "UpdatedTestName",
-          word_class: "UpdatedTestClass"
+          word_name: Faker::Lorem.word,
+          word_class: Faker::Lorem.word
         }
       }
 

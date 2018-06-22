@@ -18,7 +18,7 @@ end
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
-  config.include RequestSpecHelper, type: :request
+  config.include RequestSpecHelper
   config.before(:suite) { DatabaseCleaner.clean_with(:truncation) }
   config.before(:each) { DatabaseCleaner.strategy = :transaction }
   config.before(:each, :js => true) { DatabaseCleaner.strategy = :truncation }

@@ -1,51 +1,90 @@
 class WordsController < ApplicationController
-  before_action :set_word, only: [:show, :update, :destroy]
+  before_action :set_words
 
-  # GET /words
-  def index
-    @words = Word.all
-
-    render json: @words
-  end
+  #GET /words
+  # def index
+  #   @words = Word.all
+  #   render json: @words, status: :ok
+  # end
 
   # GET /words/1
   def show
-    render json: @word
-  end
-
-  # POST /words
-  def create
-    @word = Word.new(word_params)
-
-    if @word.save
-      render json: @word, status: :created, location: @word
+    if @words.any?
+      render json: @words
     else
-      render json: @word.errors, status: :unprocessable_entity
+      key_text = '?key='
+      key_code = Rails.application.credentials.dictionary_api[:key]
+      api = 'http://www.dictionaryapi.com/api/v1/references/collegiate/xml/'
+      url = api + @word_name + key_text + key_code
+      new_words = []
+      dictionary_response = HTTParty.get(url)
+      xml = Nokogiri::XML(dictionary_response.body)
+
+      if xml.xpath('//entry').empty?
+        render json: {}, status: :not_found
+      else
+        xml.xpath('//entry').each do |entry|
+          new_word = Word.new
+          new_word[:word_name] = entry.xpath('ew').text
+          new_word[:word_class] = entry.xpath('fl').text
+
+          entry.xpath('//dt').each do |dt|
+            new_word[:definitions].push(dt.text.gsub(/:/, ''))
+          end
+          new_word.save!
+          new_words.push new_word
+        end
+
+        render json: new_words, status: :created
+      end
+
     end
   end
 
-  # PATCH/PUT /words/1
-  def update
-    if @word.update(word_params)
-      render json: @word
-    else
-      render json: @word.errors, status: :unprocessable_entity
-    end
-  end
+  #POST /words
+  # def create
+  #   @word = Word.new(word_params)
+  #
+  #   if @word.save
+  #     render json: @word, status: :created, location: @word
+  #   else
+  #     render json: {}, status: :unprocessable_entity
+  #   end
+  # end
 
-  # DELETE /words/1
-  def destroy
-    @word.destroy
-  end
+  #PATCH/PUT /words/1
+  # def update
+  #   if @word.nil?
+  #     render json: {}, status: :not_found
+  #   elsif @word.update(word_params)
+  #     render json: @word
+  #   else
+  #     render json: @word.errors, status: :unprocessable_entity
+  #   end
+  # end
+
+  #DELETE /words/1
+  # def destroy
+  #   if @word.nil?
+  #     render json: {}, status: :not_found
+  #   else
+  #     @word.destroy
+  #   end
+  # end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_word
-      @word = Word.find(params[:id])
+    def set_words
+      @word_name = params[:id]
+      @words = Word.where(word_name: params[:id]).order(:word_name)
+      # rescue ActiveRecord::RecordNotFound
+      #   @words = []
     end
 
-    # Only allow a trusted parameter "white list" through.
-    def word_params
-      params.require(:word).permit(:word_name, :word_class)
-    end
+    # def word_params
+    #   params.require(:word).permit(
+    #     :word_name,
+    #     :word_class,
+    #     :definitions
+    #   )
+    # end
 end
