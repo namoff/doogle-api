@@ -35,7 +35,7 @@ class WordsController < ApplicationController
           new_words.push new_word
         end
 
-        render json: new_words, status: :created
+        render json: new_words
       end
 
     end

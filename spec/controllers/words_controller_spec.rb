@@ -18,7 +18,7 @@ RSpec.describe WordsController, type: :controller do
   #   }
   # }
 
-  # let(:bad_word_id) { 999 }
+   # let(:) { 999 }
 
   # describe "searching for all words" do
   #
@@ -77,9 +77,12 @@ RSpec.describe WordsController, type: :controller do
 
     context "in the database" do
 
-      it "returns the word" do
+      before do
         @word_in_database = create :word
         get :show, params: { id: @word_in_database.word_name }
+      end
+
+      it "returns the word" do
         expect(assigns(:words)).to include @word_in_database
       end
     end
@@ -88,10 +91,11 @@ RSpec.describe WordsController, type: :controller do
 
       describe "but in DictionaryAPI" do
 
-        before :each do
-          @word_name_in_api = 'catacomb'
-          stub_get_dictionary_api_catacomb
-          get :show, params: { id: @word_name_in_api }
+        let(:word_name_in_api) { Faker::Lorem.word }
+
+        before do
+          stub_get_dictionary_api_success word_name_in_api
+          get :show, params: { id: word_name_in_api }
         end
 
         it "is successful" do
@@ -99,21 +103,22 @@ RSpec.describe WordsController, type: :controller do
         end
 
         it "returns the word" do
-          expect(assigns(:words).first.word_name).to eq @word_name_in_api
+          expect(assigns(:words).first.word_name).to eq word_name_in_api
         end
 
         it "saves the word" do
-          expect(Word.find_by_word_name(@word_name_in_api).word_name).to eq @word_name_in_api
+          expect(Word.find_by_word_name(word_name_in_api).word_name).to eq word_name_in_api
         end
 
       end
 
       describe "and not in DictionaryAPI" do
 
+        let(:word_name_doesnt_exist) { Faker::Lorem.word }
+
         before do
-          @word_name_doesnt_exist = 'worddoesntexist'
-          stub_get_dictionary_api_worddoesntexist
-          get :show, params: { id: @word_name_doesnt_exist }
+          stub_get_dictionary_api_fail
+          get :show, params: { id: word_name_doesnt_exist }
         end
 
         it "is not successful" do
