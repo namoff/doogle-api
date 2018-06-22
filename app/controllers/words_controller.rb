@@ -1,5 +1,7 @@
 class WordsController < ApplicationController
+  include DictionaryApi
   before_action :set_words
+
 
   #GET /words
   # def index
@@ -12,12 +14,8 @@ class WordsController < ApplicationController
     if @words.any?
       render json: @words
     else
-      key_text = '?key='
-      key_code = Rails.application.credentials.dictionary_api[:key]
-      api = 'http://www.dictionaryapi.com/api/v1/references/collegiate/xml/'
-      url = api + @word_name + key_text + key_code
       new_words = []
-      dictionary_response = HTTParty.get(url)
+      dictionary_response = dictionary_api_search @word_name
       xml = Nokogiri::XML(dictionary_response.body)
 
       if xml.xpath('//entry').empty?
