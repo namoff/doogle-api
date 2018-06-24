@@ -11,14 +11,13 @@ module DictionaryApi
 
   def parse_dictionary_response response
     parsed_words = []
-    xml = Nokogiri::XML(response.body)
-    xml.xpath('//entry').each do |entry|
+    Nokogiri::XML(response.body).xpath('//entry').each do |entry|
       word = {
         word_name: entry.xpath('ew').text,
         word_class: entry.xpath('fl').text,
         definitions: []
       }
-      entry.xpath('//dt').each do |dt|
+      entry.xpath('dt').each do |dt|
         word[:definitions].push(dt.text.gsub(/:/, ''))
       end
       parsed_words.push word
