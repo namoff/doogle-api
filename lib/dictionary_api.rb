@@ -17,7 +17,7 @@ module DictionaryApi
         word_class: entry.xpath('fl').text,
         definitions: []
       }
-      entry.xpath('dt').each do |dt|
+      entry.xpath('def/dt').each do |dt|
         word[:definitions].push(dt.text.gsub(/:/, ''))
       end
       parsed_words.push word

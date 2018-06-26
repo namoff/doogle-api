@@ -2,7 +2,7 @@ class WordsController < ApplicationController
   include DictionaryApi
   before_action :set_words
 
-  def show
+  def search
     if @words.any?
       render json: @words
     else
@@ -20,8 +20,8 @@ class WordsController < ApplicationController
 
   private
     def set_words
-      @word_name = params[:id]
-      @words = Word.where(word_name: params[:id]).order(:word_name)
+      @word_name = params[:word_name]
+      @words = Word.where(word_name: @word_name).order(:word_name)
     end
 
 end

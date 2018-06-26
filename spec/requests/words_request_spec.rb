@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Words", type: :request do
 
-  describe "GET /words/:id" do
+  describe "GET /:word_name" do
 
     context "with invalid word" do
 

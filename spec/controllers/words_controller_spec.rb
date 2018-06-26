@@ -8,7 +8,7 @@ RSpec.describe WordsController, type: :controller do
 
       before do
         @word_in_database = create :word
-        get :show, params: { id: @word_in_database.word_name }
+        get :search, params: { word_name: @word_in_database.word_name }
       end
 
       it "returns the word" do
@@ -24,7 +24,7 @@ RSpec.describe WordsController, type: :controller do
 
         before do
           stub_get_dictionary_api_success word_name_in_api
-          get :show, params: { id: word_name_in_api }
+          get :search, params: { word_name: word_name_in_api }
         end
 
         it "is successful" do
@@ -47,7 +47,7 @@ RSpec.describe WordsController, type: :controller do
 
         before do
           stub_get_dictionary_api_fail
-          get :show, params: { id: word_name_doesnt_exist }
+          get :search, params: { word_name: word_name_doesnt_exist }
         end
 
         it "is not successful" do
