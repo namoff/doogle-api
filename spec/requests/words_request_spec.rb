@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Words", type: :request do
 
-  describe "GET /:word_name" do
+  describe "POST /:word_name" do
 
     context "with invalid word" do
 
@@ -10,7 +10,7 @@ RSpec.describe "Words", type: :request do
 
       before do
         stub_get_dictionary_api_fail
-        get word_path invalid_word_name
+        post root_path invalid_word_name
       end
 
       it "has failure response" do
@@ -31,7 +31,7 @@ RSpec.describe "Words", type: :request do
 
       before do
         @valid_word = create(:word)
-        get word_path @valid_word.word_name
+        post root_path @valid_word.word_name
       end
 
       it "has success response" do
