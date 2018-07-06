@@ -9,7 +9,7 @@ class WordsController < ApplicationController
       dictionary_words = dictionary_api_search @word_name.parameterize(separator: '+')
       if dictionary_words.any?
         dictionary_words.each do |word|
-          Word.create!(word)
+          Word.create! word
         end
         render json: dictionary_words
       else
@@ -20,7 +20,7 @@ class WordsController < ApplicationController
 
   private
     def set_words
-      @word_name = params[:word_name] ? params[:word_name] : ""
+      @word_name = params[:word_name] || ""
       @words = Word.where("word_name like ?", "%#{@word_name}%" )
     end
 
